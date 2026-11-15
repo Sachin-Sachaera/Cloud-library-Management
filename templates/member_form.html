@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit Member' if member else 'Register Member' }}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>{{ 'Edit Member' if member else 'Register New Member' }}</h1>
+        <p>{{ 'Update this member’s details.' if member else 'Add a new member to the library system.' }}</p>
+    </div>
+</div>
+
+<div class="panel" style="max-width: 640px;">
+    <form method="POST">
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="membership_id">Membership ID</label>
+                <input type="text" id="membership_id" name="membership_id" value="{{ member.membership_id if member else '' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" value="{{ member.name if member else '' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="{{ member.email if member else '' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone</label>
+                <input type="text" id="phone" name="phone" value="{{ member.phone if member else '' }}" placeholder="Optional">
+            </div>
+            <div class="form-group">
+                <label for="account_username">Login Username</label>
+                <input type="text" id="account_username" name="account_username" value="{{ account.username if account else '' }}" placeholder="{{ 'Optional' if member else 'Defaults to membership ID' }}">
+            </div>
+            <div class="form-group">
+                <label for="account_password">{{ 'Reset Password' if member else 'Login Password' }}</label>
+                <input type="text" id="account_password" name="account_password" placeholder="{{ 'Leave blank to keep current password' if member else 'Defaults to member123' }}">
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">{{ 'Save Changes' if member else 'Register Member' }}</button>
+            <a href="{{ url_for('members') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

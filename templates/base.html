@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Cloud Library{% endblock %} · CLMS</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+{% if session.user_id %}
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand">
+            <span class="brand-icon">☁</span>
+            <div>
+                <div class="brand-title">Cloud Library</div>
+                <div class="brand-sub">Management System</div>
+            </div>
+        </div>
+        <nav class="nav-links">
+            <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}">
+                <span class="nav-icon">▤</span> Dashboard
+            </a>
+            <a href="{{ url_for('books') }}" class="{{ 'active' if request.endpoint in ['books','add_book','edit_book'] }}">
+                <span class="nav-icon">▥</span> Book Catalog
+            </a>
+            {% if session.role == 'admin' %}
+            <a href="{{ url_for('members') }}" class="{{ 'active' if request.endpoint in ['members','add_member','edit_member'] }}">
+                <span class="nav-icon">◉</span> Members
+            </a>
+            <a href="{{ url_for('transactions') }}" class="{{ 'active' if request.endpoint in ['transactions','issue_book'] }}">
+                <span class="nav-icon">⇄</span> Issue &amp; Return
+            </a>
+            <a href="{{ url_for('reservations') }}" class="{{ 'active' if request.endpoint == 'reservations' }}">
+                <span class="nav-icon">◇</span> Reservations
+            </a>
+            <a href="{{ url_for('borrow_requests') }}" class="{{ 'active' if request.endpoint in ['borrow_requests','approve_borrow_request','reject_borrow_request'] }}">
+                <span class="nav-icon">✎</span> Borrow Requests
+            </a>
+            <a href="{{ url_for('reports') }}" class="{{ 'active' if request.endpoint == 'reports' }}">
+                <span class="nav-icon">▦</span> Reports
+            </a>
+            {% else %}
+            <a href="{{ url_for('my_loans') }}" class="{{ 'active' if request.endpoint == 'my_loans' }}">
+                <span class="nav-icon">⇄</span> My Loans
+            </a>
+            <a href="{{ url_for('my_reservations') }}" class="{{ 'active' if request.endpoint == 'my_reservations' }}">
+                <span class="nav-icon">◇</span> Reservations
+            </a>
+            <a href="{{ url_for('my_requests') }}" class="{{ 'active' if request.endpoint == 'my_requests' }}">
+                <span class="nav-icon">✎</span> My Requests
+            </a>
+            <a href="{{ url_for('profile') }}" class="{{ 'active' if request.endpoint == 'profile' }}">
+                <span class="nav-icon">◉</span> Profile
+            </a>
+            {% endif %}
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-chip">
+                <span class="user-avatar">{{ session.username[0] | upper }}</span>
+                <span>{{ session.username }} <small>({{ session.role }})</small></span>
+            </div>
+            <a href="{{ url_for('logout') }}" class="logout-link">Log out</a>
+        </div>
+    </aside>
+    <main class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-stack">
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+</div>
+{% else %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-stack flash-stack-standalone">
+            {% for category, message in messages %}
+                <div class="flash flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    {% block auth_content %}{% endblock %}
+{% endif %}
+</body>
+</html>

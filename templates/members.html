@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Members{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Members</h1>
+        <p>Registered library members and their contact details.</p>
+    </div>
+    <a href="{{ url_for('add_member') }}" class="btn btn-primary">+ Register Member</a>
+</div>
+
+<div class="panel">
+    <form method="GET" class="search-bar" style="margin-bottom:20px;">
+        <input type="text" name="q" placeholder="Search by name, email, or membership ID..." value="{{ query }}">
+        <button type="submit" class="btn btn-secondary btn-sm">Search</button>
+        {% if query %}
+        <a href="{{ url_for('members') }}" class="btn btn-secondary btn-sm">Clear</a>
+        {% endif %}
+    </form>
+
+    {% if members %}
+    <table>
+        <thead>
+            <tr>
+                <th>Membership ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Joined</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for m in members %}
+            <tr>
+                <td class="mono">{{ m.membership_id }}</td>
+                <td><strong>{{ m.name }}</strong></td>
+                <td>{{ m.email }}</td>
+                <td>{{ m.phone or '—' }}</td>
+                <td class="text-muted">{{ m.joined_on.split(' ')[0] if m.joined_on else '—' }}</td>
+                <td>
+                    <div class="row-actions">
+                        <a href="{{ url_for('edit_member', member_id=m.id) }}" class="btn btn-secondary btn-sm">Edit</a>
+                        <form method="POST" action="{{ url_for('delete_member', member_id=m.id) }}" class="inline"
+                              onsubmit="return confirm('Remove this member?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">◉</div>
+        <p>No members match your search.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

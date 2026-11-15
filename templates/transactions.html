@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Issue & Return{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Issue &amp; Return Tracking</h1>
+        <p>All book loans, due dates, and return status.</p>
+    </div>
+    <a href="{{ url_for('issue_book') }}" class="btn btn-primary">+ Issue a Book</a>
+</div>
+
+<div class="panel">
+    <div class="search-bar" style="margin-bottom:20px;">
+        <a href="{{ url_for('transactions') }}" class="btn btn-sm {{ 'btn-primary' if not status_filter else 'btn-secondary' }}">All</a>
+        <a href="{{ url_for('transactions', status='issued') }}" class="btn btn-sm {{ 'btn-primary' if status_filter=='issued' else 'btn-secondary' }}">Issued</a>
+        <a href="{{ url_for('transactions', status='overdue') }}" class="btn btn-sm {{ 'btn-primary' if status_filter=='overdue' else 'btn-secondary' }}">Overdue</a>
+        <a href="{{ url_for('transactions', status='returned') }}" class="btn btn-sm {{ 'btn-primary' if status_filter=='returned' else 'btn-secondary' }}">Returned</a>
+    </div>
+
+    {% if transactions %}
+    <table>
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Member</th>
+                <th>Issue Date</th>
+                <th>Due Date</th>
+                <th>Return Date</th>
+                <th>Fine</th>
+                <th>Renewals</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in transactions %}
+            <tr>
+                <td><strong>{{ t.book_title }}</strong><br><span class="text-muted" style="font-size:12px;">{{ t.book_author }}</span></td>
+                <td>{{ t.member_name }}<br><span class="text-muted mono" style="font-size:12px;">{{ t.membership_id }}</span></td>
+                <td>{{ t.issue_date }}</td>
+                <td>{{ t.due_date }}</td>
+                <td>{{ t.return_date or '—' }}</td>
+                <td>{{ t.fine if t.fine else '—' }}</td>
+                <td>{{ t.renewals }}</td>
+                <td><span class="badge badge-{{ t.status }}">{{ t.status | capitalize }}</span></td>
+                <td>
+                    {% if t.status != 'returned' %}
+                    <form method="POST" action="{{ url_for('return_book', txn_id=t.id) }}" class="inline">
+                        <button type="submit" class="btn btn-secondary btn-sm">Mark Returned</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">⇄</div>
+        <p>No transactions found for this filter.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

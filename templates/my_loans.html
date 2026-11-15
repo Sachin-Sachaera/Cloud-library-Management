@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}My Loans{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>My Loans</h1>
+        <p>Track books issued to you, return dates, and overdue fines.</p>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="search-bar" style="margin-bottom:20px;">
+        <a href="{{ url_for('my_loans') }}" class="btn btn-sm {{ 'btn-primary' if not status_filter else 'btn-secondary' }}">All</a>
+        <a href="{{ url_for('my_loans', status='issued') }}" class="btn btn-sm {{ 'btn-primary' if status_filter=='issued' else 'btn-secondary' }}">Issued</a>
+        <a href="{{ url_for('my_loans', status='overdue') }}" class="btn btn-sm {{ 'btn-primary' if status_filter=='overdue' else 'btn-secondary' }}">Overdue</a>
+        <a href="{{ url_for('my_loans', status='returned') }}" class="btn btn-sm {{ 'btn-primary' if status_filter=='returned' else 'btn-secondary' }}">Returned</a>
+    </div>
+
+    {% if loans %}
+    <table>
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>ISBN</th>
+                <th>Issue Date</th>
+                <th>Due Date</th>
+                <th>Return Date</th>
+                <th>Fine</th>
+                <th>Renewals</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in loans %}
+            <tr>
+                <td><strong>{{ t.book_title }}</strong><br><span class="text-muted" style="font-size:12px;">{{ t.book_author }}</span></td>
+                <td class="mono text-muted">{{ t.isbn or '—' }}</td>
+                <td>{{ t.issue_date }}</td>
+                <td>{{ t.due_date }}</td>
+                <td>{{ t.return_date or '—' }}</td>
+                <td>{{ t.fine if t.fine else '—' }}</td>
+                <td>{{ t.renewals }} / 1</td>
+                <td><span class="badge badge-{{ t.status }}">{{ t.status | capitalize }}</span></td>
+                <td>
+                    {% if t.status == 'issued' and t.renewals < 1 %}
+                    <form method="POST" action="{{ url_for('renew_loan', txn_id=t.id) }}" class="inline">
+                        <button type="submit" class="btn btn-secondary btn-sm">Renew</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">⇄</div>
+        <p>No loans found for this filter.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

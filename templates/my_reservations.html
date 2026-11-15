@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}My Reservations{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>My Reservations</h1>
+        <p>Books you are waiting for and their current status.</p>
+    </div>
+    <a href="{{ url_for('books') }}" class="btn btn-primary">Browse Books</a>
+</div>
+
+<div class="panel">
+    {% if reservations %}
+    <table>
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Requested</th>
+                <th>Availability</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in reservations %}
+            <tr>
+                <td><strong>{{ r.book_title }}</strong><br><span class="text-muted" style="font-size:12px;">{{ r.book_author }}</span></td>
+                <td>{{ r.request_date }}</td>
+                <td>{{ r.available_copies }} available</td>
+                <td><span class="badge badge-{{ r.status }}">{{ r.status | capitalize }}</span></td>
+                <td>
+                    {% if r.status == 'pending' %}
+                    <form method="POST" action="{{ url_for('cancel_reservation', reservation_id=r.id) }}" class="inline">
+                        <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">◇</div>
+        <p>You do not have any reservations.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

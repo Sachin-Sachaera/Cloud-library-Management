@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Issue a Book{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Issue a Book</h1>
+        <p>Select an available title and the member borrowing it.</p>
+    </div>
+</div>
+
+<div class="panel" style="max-width: 640px;">
+    {% if not books %}
+    <div class="empty-state">
+        <div class="empty-icon">▥</div>
+        <p>No copies currently available. Add books or wait for returns.</p>
+    </div>
+    {% elif not members %}
+    <div class="empty-state">
+        <div class="empty-icon">◉</div>
+        <p>No members registered yet. <a href="{{ url_for('add_member') }}">Register one first</a>.</p>
+    </div>
+    {% else %}
+    <form method="POST">
+        <div class="form-grid">
+            <div class="form-group full">
+                <label for="book_id">Book</label>
+                <select id="book_id" name="book_id" required>
+                    {% for b in books %}
+                    <option value="{{ b.id }}">{{ b.title }} — {{ b.author }} ({{ b.available_copies }} available)</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group full">
+                <label for="member_id">Member</label>
+                <select id="member_id" name="member_id" required>
+                    {% for m in members %}
+                    <option value="{{ m.id }}">{{ m.name }} ({{ m.membership_id }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group full">
+                <label for="due_date">Due Date</label>
+                <input id="due_date" name="due_date" type="date" value="{{ default_due_date }}" required>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Issue Book</button>
+            <a href="{{ url_for('transactions') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

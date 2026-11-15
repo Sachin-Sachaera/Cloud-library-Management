@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Member Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Member Dashboard</h1>
+        <p>Your current loans, due dates, fines, and available books.</p>
+    </div>
+</div>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-icon icon-blue">⇄</div>
+        <div class="stat-value">{{ active_loans }}</div>
+        <div class="stat-label">Active Loans</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon icon-warn">!</div>
+        <div class="stat-value">{{ overdue_loans }}</div>
+        <div class="stat-label">Overdue Loans</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon icon-teal">▥</div>
+        <div class="stat-value">{{ available_titles }}</div>
+        <div class="stat-label">Available Titles</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon icon-midnight">₹</div>
+        <div class="stat-value">{{ total_fines }}</div>
+        <div class="stat-label">Total Fines</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon icon-teal">◇</div>
+        <div class="stat-value">{{ pending_reservations }}</div>
+        <div class="stat-label">Pending Reservations</div>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h2>My Recent Loans</h2>
+        <a href="{{ url_for('my_loans') }}" class="btn btn-secondary btn-sm">View All</a>
+    </div>
+    {% if my_transactions %}
+    <table>
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Issue Date</th>
+                <th>Due Date</th>
+                <th>Return Date</th>
+                <th>Fine</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in my_transactions %}
+            <tr>
+                <td><strong>{{ t.book_title }}</strong><br><span class="text-muted" style="font-size:12px;">{{ t.book_author }}</span></td>
+                <td>{{ t.issue_date }}</td>
+                <td>{{ t.due_date }}</td>
+                <td>{{ t.return_date or '—' }}</td>
+                <td>{{ t.fine if t.fine else '—' }}</td>
+                <td><span class="badge badge-{{ t.status }}">{{ t.status | capitalize }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">⇄</div>
+        <p>You do not have any loans yet.</p>
+    </div>
+    {% endif %}
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h2>Quick Actions</h2>
+    </div>
+    <div class="row-actions">
+        <a href="{{ url_for('books') }}" class="btn btn-primary">Browse Books</a>
+        <a href="{{ url_for('my_requests') }}" class="btn btn-secondary">My Requests</a>
+        <a href="{{ url_for('my_reservations') }}" class="btn btn-secondary">My Reservations</a>
+        <a href="{{ url_for('profile') }}" class="btn btn-secondary">Update Profile</a>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h2>Request History</h2>
+    </div>
+    {% if my_requests_history %}
+    <table>
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Requested</th>
+                <th>Status</th>
+                <th>Due Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in my_requests_history %}
+            <tr>
+                <td><strong>{{ r.book_title }}</strong></td>
+                <td>{{ r.request_date }}</td>
+                <td><span class="badge badge-{{ r.status }}">{{ r.status | capitalize }}</span></td>
+                <td>{{ r.due_date or '—' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">✎</div>
+        <p>No request history yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

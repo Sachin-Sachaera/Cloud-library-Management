@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Book Details{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>{{ book.title }}</h1>
+        <p>{{ book.author }} · {{ book.category or 'General' }}</p>
+    </div>
+    <a href="{{ url_for('books') }}" class="btn btn-secondary">Back to Catalog</a>
+</div>
+
+<div class="panel">
+    <div class="form-grid">
+        <div class="form-group">
+            <label>Title</label>
+            <input value="{{ book.title }}" disabled>
+        </div>
+        <div class="form-group">
+            <label>Author</label>
+            <input value="{{ book.author }}" disabled>
+        </div>
+        <div class="form-group">
+            <label>ISBN</label>
+            <input value="{{ book.isbn or '—' }}" disabled>
+        </div>
+        <div class="form-group">
+            <label>Category</label>
+            <input value="{{ book.category or '—' }}" disabled>
+        </div>
+        <div class="form-group full">
+            <label>Availability</label>
+            <input value="{{ book.available_copies }} of {{ book.total_copies }} copies available" disabled>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        {% if session.role == 'member' %}
+            {% if active_request %}
+                <button class="btn btn-secondary" disabled>Request Sent</button>
+            {% else %}
+                <form method="POST" action="{{ url_for('request_borrow', book_id=book.id) }}" class="inline">
+                    <button type="submit" class="btn btn-primary">Request to Borrow</button>
+                </form>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

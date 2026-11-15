@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Borrow Requests{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Borrow Requests</h1>
+        <p>Approve or reject member borrow requests before issuing books.</p>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="search-bar" style="margin-bottom:20px;">
+        <a href="{{ url_for('borrow_requests', status='pending') }}" class="btn btn-sm {{ 'btn-primary' if status_filter=='pending' else 'btn-secondary' }}">Pending</a>
+        <a href="{{ url_for('borrow_requests', status='approved') }}" class="btn btn-sm {{ 'btn-primary' if status_filter=='approved' else 'btn-secondary' }}">Approved</a>
+        <a href="{{ url_for('borrow_requests', status='rejected') }}" class="btn btn-sm {{ 'btn-primary' if status_filter=='rejected' else 'btn-secondary' }}">Rejected</a>
+        <a href="{{ url_for('borrow_requests') }}" class="btn btn-sm {{ 'btn-primary' if not status_filter else 'btn-secondary' }}">All</a>
+    </div>
+
+    {% if requests %}
+    <table>
+        <thead>
+            <tr>
+                <th>Member</th>
+                <th>Book</th>
+                <th>Requested</th>
+                <th>Status</th>
+                <th>Due Date</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in requests %}
+            <tr>
+                <td><strong>{{ r.member_name }}</strong><br><span class="text-muted" style="font-size:12px;">{{ r.membership_id }}</span></td>
+                <td><strong>{{ r.book_title }}</strong><br><span class="text-muted" style="font-size:12px;">{{ r.book_author }}</span></td>
+                <td>{{ r.request_date }}</td>
+                <td><span class="badge badge-{{ r.status }}">{{ r.status | capitalize }}</span></td>
+                <td>{{ r.due_date or '—' }}</td>
+                <td>
+                    {% if r.status == 'pending' %}
+                    <div class="row-actions">
+                        <form method="POST" action="{{ url_for('approve_borrow_request', request_id=r.id) }}" class="inline">
+                            <input type="date" name="due_date" style="margin-right:8px;">
+                            <button type="submit" class="btn btn-primary btn-sm">Approve</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('reject_borrow_request', request_id=r.id) }}" class="inline">
+                            <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">⇄</div>
+        <p>No borrow requests found.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

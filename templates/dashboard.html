@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Dashboard</h1>
+        <p>Overview of library operations, at a glance.</p>
+    </div>
+</div>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-icon icon-midnight">▥</div>
+        <div class="stat-value">{{ total_titles }}</div>
+        <div class="stat-label">Book Titles ({{ total_books }} total copies)</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon icon-teal">◉</div>
+        <div class="stat-value">{{ total_members }}</div>
+        <div class="stat-label">Registered Members</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon icon-blue">⇄</div>
+        <div class="stat-value">{{ issued_count }}</div>
+        <div class="stat-label">Books Currently Issued</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon icon-warn">!</div>
+        <div class="stat-value">{{ overdue_count }}</div>
+        <div class="stat-label">Overdue Returns</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon icon-teal">◇</div>
+        <div class="stat-value">{{ pending_reservations }}</div>
+        <div class="stat-label">Pending Reservations</div>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h2>Recent Activity</h2>
+        <a href="{{ url_for('transactions') }}" class="btn btn-secondary btn-sm">View All</a>
+    </div>
+    {% if recent_transactions %}
+    <table>
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Member</th>
+                <th>Issue Date</th>
+                <th>Due Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in recent_transactions %}
+            <tr>
+                <td>{{ t.book_title }}</td>
+                <td>{{ t.member_name }}</td>
+                <td>{{ t.issue_date }}</td>
+                <td>{{ t.due_date }}</td>
+                <td><span class="badge badge-{{ t.status }}">{{ t.status | capitalize }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">⇄</div>
+        <p>No transactions yet. Issue a book to get started.</p>
+    </div>
+    {% endif %}
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h2>Quick Actions</h2>
+    </div>
+    <div class="row-actions">
+        <a href="{{ url_for('add_book') }}" class="btn btn-primary">+ Add Book</a>
+        <a href="{{ url_for('add_member') }}" class="btn btn-secondary">+ Register Member</a>
+        <a href="{{ url_for('issue_book') }}" class="btn btn-secondary">Issue a Book</a>
+        <a href="{{ url_for('reservations') }}" class="btn btn-secondary">Manage Reservations</a>
+        <a href="{{ url_for('reports') }}" class="btn btn-secondary">View Reports</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Reservations{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Reservations</h1>
+        <p>Manage member requests for unavailable books.</p>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="search-bar" style="margin-bottom:20px;">
+        <a href="{{ url_for('reservations', status='pending') }}" class="btn btn-sm {{ 'btn-primary' if status_filter=='pending' else 'btn-secondary' }}">Pending</a>
+        <a href="{{ url_for('reservations', status='fulfilled') }}" class="btn btn-sm {{ 'btn-primary' if status_filter=='fulfilled' else 'btn-secondary' }}">Fulfilled</a>
+        <a href="{{ url_for('reservations', status='cancelled') }}" class="btn btn-sm {{ 'btn-primary' if status_filter=='cancelled' else 'btn-secondary' }}">Cancelled</a>
+        <a href="{{ url_for('reservations', status='') }}" class="btn btn-sm {{ 'btn-primary' if not status_filter else 'btn-secondary' }}">All</a>
+    </div>
+
+    {% if reservations %}
+    <table>
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Member</th>
+                <th>Requested</th>
+                <th>Availability</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in reservations %}
+            <tr>
+                <td><strong>{{ r.book_title }}</strong><br><span class="text-muted" style="font-size:12px;">{{ r.book_author }}</span></td>
+                <td>{{ r.member_name }}<br><span class="text-muted mono" style="font-size:12px;">{{ r.membership_id }}</span></td>
+                <td>{{ r.request_date }}</td>
+                <td>{{ r.available_copies }} available</td>
+                <td><span class="badge badge-{{ r.status }}">{{ r.status | capitalize }}</span></td>
+                <td>
+                    {% if r.status == 'pending' %}
+                    <div class="row-actions">
+                        <form method="POST" action="{{ url_for('fulfill_reservation', reservation_id=r.id) }}" class="inline">
+                            <button type="submit" class="btn btn-secondary btn-sm">Fulfill</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('cancel_reservation', reservation_id=r.id) }}" class="inline">
+                            <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">◇</div>
+        <p>No reservations found for this filter.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

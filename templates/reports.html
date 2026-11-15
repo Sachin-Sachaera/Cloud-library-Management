@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Reports</h1>
+        <p>Operational summaries for circulation, stock, fines, and reservations.</p>
+    </div>
+    <a href="{{ url_for('export_transactions') }}" class="btn btn-primary">Export Transactions CSV</a>
+</div>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-icon icon-midnight">₹</div>
+        <div class="stat-value">{{ totals.fines }}</div>
+        <div class="stat-label">Total Fines Recorded</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon icon-teal">◇</div>
+        <div class="stat-value">{{ totals.reservations }}</div>
+        <div class="stat-label">Pending Reservations</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon icon-blue">✓</div>
+        <div class="stat-value">{{ totals.returned }}</div>
+        <div class="stat-label">Returned Transactions</div>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h2>Most Issued Books</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Author</th>
+                <th>Issues</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for b in top_books %}
+            <tr>
+                <td><strong>{{ b.title }}</strong></td>
+                <td>{{ b.author }}</td>
+                <td>{{ b.issue_count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h2>Category Stock</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Titles</th>
+                <th>Total Copies</th>
+                <th>Available Copies</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in category_summary %}
+            <tr>
+                <td>{{ c.category }}</td>
+                <td>{{ c.titles }}</td>
+                <td>{{ c.total_copies }}</td>
+                <td>{{ c.available_copies }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h2>Monthly Issues</h2>
+    </div>
+    {% if monthly_issues %}
+    <table>
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>Issues</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for m in monthly_issues %}
+            <tr>
+                <td>{{ m.month }}</td>
+                <td>{{ m.issue_count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">▦</div>
+        <p>No issue history yet.</p>
+    </div>
+    {% endif %}
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h2>Overdue Members</h2>
+    </div>
+    {% if overdue_members %}
+    <table>
+        <thead>
+            <tr>
+                <th>Member</th>
+                <th>Membership ID</th>
+                <th>Overdue Books</th>
+                <th>Fine Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for m in overdue_members %}
+            <tr>
+                <td><strong>{{ m.name }}</strong></td>
+                <td class="mono">{{ m.membership_id }}</td>
+                <td>{{ m.overdue_count }}</td>
+                <td>{{ m.fine_total }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">✓</div>
+        <p>No overdue members right now.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

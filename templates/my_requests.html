@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}My Requests{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>My Borrow Requests</h1>
+        <p>Track your requests and the admin decision history.</p>
+    </div>
+    <a href="{{ url_for('books') }}" class="btn btn-primary">Browse Books</a>
+</div>
+
+<div class="panel">
+    {% if requests %}
+    <table>
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Requested</th>
+                <th>Status</th>
+                <th>Due Date</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in requests %}
+            <tr>
+                <td><strong>{{ r.book_title }}</strong><br><span class="text-muted" style="font-size:12px;">{{ r.book_author }}</span></td>
+                <td>{{ r.request_date }}</td>
+                <td><span class="badge badge-{{ r.status }}">{{ r.status | capitalize }}</span></td>
+                <td>{{ r.due_date or '—' }}</td>
+                <td>
+                    {% if r.status == 'pending' %}
+                    <form method="POST" action="{{ url_for('cancel_borrow_request', request_id=r.id) }}" class="inline">
+                        <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">⇄</div>
+        <p>You have not made any borrow requests yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

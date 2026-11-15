@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Create Account{% endblock %}
+{% block auth_content %}
+<div class="login-wrap">
+    <div class="login-card">
+        <div class="login-brand">
+            <span class="brand-icon">☁</span>
+            <h1>Create Member Account</h1>
+        </div>
+        <p class="subtitle">Register as a new library member</p>
+        <form method="POST">
+            <div class="form-group" style="margin-bottom:12px;">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+                <label for="phone">Phone</label>
+                <input type="text" id="phone" name="phone">
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group" style="margin-bottom:16px;">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Account</button>
+        </form>
+        <div class="form-actions" style="margin-top:16px; justify-content:center;">
+            <a href="{{ url_for('login') }}" class="btn btn-secondary">Back to Login</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
